@@ -4,6 +4,7 @@ use App\Actions\Fortify\UserProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\DocumentFileController;
+use App\Http\Controllers\StreetLightController;
 use App\Http\Controllers\UserActivityController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -31,7 +32,7 @@ Route::middleware([
     "verified",
 ])->group(function () {
     Route::get("/user/profile", [UserProfileController::class, "show"])->name("profile.show");
-    
+
     Route::middleware(["role:super-admin|admin"])->group(function () {
         Route::get("/dashboard", [DashboardController::class, "index"])->name("dashboard");
         Route::prefix("admin")->group(function () {
@@ -51,8 +52,10 @@ Route::middleware([
                     Route::get('/dump-redis', [DevController::class, 'dumpRedis'])->name('dump-redis');
                     Route::get('/dump-storage-logs', [DevController::class, 'dumpStorageLogs'])->name('dump-storage-logs');
                 });
-    
+
             });
+
+            Route::resource('street-light', StreetLightController::class);
 
             Route::resource("document-file", DocumentFileController::class);
 

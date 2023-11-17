@@ -21,16 +21,14 @@ import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import FolderSharedIcon from '@mui/icons-material/FolderShared';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import StorageIcon from '@mui/icons-material/Storage';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import BackupIcon from '@mui/icons-material/Backup';
 import { asset } from '@/Models/Helper';
 import { User } from '@/types';
 import { VersionContext } from '@/Context/VersionContext';
+import WbIncandescentIcon from '@mui/icons-material/WbIncandescent';
 
 interface Props {
   title: string;
@@ -174,6 +172,17 @@ export default function DashboardAdminLayout({
               <DashboardIcon fontSize="large" />
             </span>
             Dashboard
+          </ResponsiveNavLink>
+        </li>
+        <li>
+          <ResponsiveNavLink
+            href={route('street-light.index')}
+            active={route().current('street-light.index')}
+          >
+            <span className={'mr-4'}>
+              <WbIncandescentIcon fontSize="large" />
+            </span>
+            Lampu Jalan
           </ResponsiveNavLink>
         </li>
         {user.roles.some(role => role.name === 'super-admin') && (
