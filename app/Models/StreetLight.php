@@ -14,6 +14,7 @@ class StreetLight extends Model
         "description",
         "latitude",
         "longitude",
+        "status",
         "radius",
         "desa_kelurahan_id",
     ];
@@ -23,6 +24,7 @@ class StreetLight extends Model
         'description',
         'latitude',
         'longitude',
+        'status',
         "radius",
         'desa_kelurahan.name',
         'desa_kelurahan.kecamatan.name',

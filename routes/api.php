@@ -42,6 +42,8 @@ Route::get('kecamatan/{kecamatan}/desa-kelurahan', function (Request $request)
 Route::post('login', [AuthController::class, 'getToken'])->name('api.login');
 
 Route::get('street-light', [StreetLightController::class, 'getStreetLightsApi'])->name('api.street-light');
+
+Route::get('report', [ReportController::class, 'reportIndex'])->name('api.report.index');
 Route::middleware('auth:sanctum')->group(function ()
 {
     Route::post('report', [ReportController::class, 'store'])->name('api.report.store');

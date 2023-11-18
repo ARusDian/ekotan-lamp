@@ -25,6 +25,18 @@ class ReportController extends Controller
         ]);
     }
 
+    public function reportIndex(Request $request)
+    {
+        $reports = Report::with(["streetLight.desaKelurahan.kecamatan", "user"])
+            ->whereColumns($request->get('columnFilters'))
+            ->latest('id')
+            ->paginate($request->get('perPage') ?? 10);
+        return response()->json([
+            "status" => "success",
+            "data" => $reports
+            ]);
+    }
+
     public function getUserReportsApi(Request $request)
     {
         $reports = Report::with(["streetLight.desaKelurahan.kecamatan", "user"])

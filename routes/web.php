@@ -66,6 +66,8 @@ Route::middleware([
             Route::get('street-light-map', [StreetLightController::class, 'map'])->name('street-light.map');
             Route::resource('report', ReportController::class);
 
+            Route::get('street-light-cluster', [StreetLightController::class, 'DBSCANCluster'])->name('street-light.cluster');
+
             Route::resource("document-file", DocumentFileController::class);
 
         });

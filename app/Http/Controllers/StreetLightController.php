@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Kecamatan;
 use App\Models\StreetLight;
+use App\Utils\DBSCAN;
+use App\Utils\PolygonGenerator;
 use Illuminate\Http\Request;
 
 class StreetLightController extends Controller
@@ -90,7 +92,6 @@ class StreetLightController extends Controller
             'latitude' => ['required'],
             'longitude' => ['required'],
             'radius' => ['required'],
-            'status' => ['required', 'in:BRIGHT,DIM,OFF'],
             'desa_kelurahan' => ['required'],
             'desa_kelurahan.id' => ['required', 'exists:desa_kelurahan,id'],
         ]);
@@ -101,7 +102,7 @@ class StreetLightController extends Controller
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
             'radius' => $request->radius,
-            'status' => $request->status,
+            'status' => "FINE",
             'desa_kelurahan_id' => $request->desa_kelurahan['id'],
         ]);
 
@@ -144,10 +145,17 @@ class StreetLightController extends Controller
             'latitude' => ['required'],
             'longitude' => ['required'],
             'radius' => ['required'],
-            'status' => ['required', 'in:BRIGHT,DIM,OFF'],
+            'status' => ['required', 'in:REPORTED,VALID,ONPROCESS,FINE'],
             'desa_kelurahan' => ['required'],
             'desa_kelurahan.id' => ['required', 'exists:desa_kelurahan,id'],
         ]);
+
+        if ($request->has('status') && $request->status == 'FINE' && $streetLight->status == 'ONPROCESS')
+        {
+            $streetLight->reports()->update([
+                'is_solved' => true,
+            ]);
+        }
 
         $streetLight->update($request->all());
 
@@ -165,5 +173,93 @@ class StreetLightController extends Controller
         return redirect()->route('street-light.index', $streetLight->id)->banner(
             'Successfully deleted street light'
         );
+    }
+
+    public function DBSCANCluster()
+    {
+        $StreetLight = StreetLight::all();
+
+        $StreetLight = $StreetLight->map(function ($item, $key)
+        {
+            return [
+                'latitude' => $item->latitude,
+                'longitude' => $item->longitude,
+            ];
+        })->toArray();
+
+        $epsilon = 0.001;
+
+        $minPoints = 4;
+
+        $dbscan = new DBSCAN($StreetLight, $epsilon, $minPoints);
+
+        $data = $dbscan->run();
+
+        $streetLightCluster = [];
+
+        foreach ($data as $cluster)
+        {
+            $clusterData = [];
+            foreach ($cluster as $clusterItem)
+            {
+                $clusterData[] = [
+                     $StreetLight[$clusterItem]['latitude'], $StreetLight[$clusterItem]['longitude']
+                ];
+            }
+            $streetLightCluster[] = $clusterData;
+        }
+        
+
+        $alphaValue = 0.1;
+
+        $concaveHullArray = [];
+
+        foreach ($streetLightCluster as $cluster)
+        {
+            $generator = new PolygonGenerator($cluster);
+            $concaveHullArray[] = $generator->generatePolygon(40, deg2rad(45));
+        }
+
+        $concaveHullArrayFloat = [];
+
+        foreach ($concaveHullArray as $cluster)
+        {
+            $clusterData = [];
+            foreach ($cluster as $clusterItem)
+            {
+                $clusterData[] = [
+                     floatval($clusterItem[0]), floatval($clusterItem[1])
+                ];
+            }
+            $concaveHullArrayFloat[] = $clusterData;
+        }
+
+        $geoJson = [
+            'type' => 'FeatureCollection',
+            'features' => [],
+        ];
+
+        foreach ($concaveHullArrayFloat as $cluster)
+        {
+            $geoJson['features'][] = [
+                'type' => 'Feature',
+                'properties' => [
+                    'stroke' => '#555555',
+                    'stroke-width' => 2,
+                    'stroke-opacity' => 1,
+                    'fill' => '#555555',
+                    'fill-opacity' => 0.5,
+                ],
+                'geometry' => [
+                    'type' => 'Polygon',
+                    'coordinates' => [
+                        $cluster,
+                    ],
+                ],
+            ];
+        }
+        
+        return response()->json($geoJson);
+
     }
 }

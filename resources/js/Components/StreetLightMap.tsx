@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button, Checkbox, InputLabel, TextField } from "@mui/material";
 import { StreetLightModel, SubmissionStatusColor } from "@/Models/StreetLight";
 import { Link } from "@inertiajs/react";
-
+import { polygonCluster } from "@/Pages/Admin/StreetLight/polygon"
 interface Props {
     user?: User;
     mapHeight: string;
@@ -217,7 +217,15 @@ export default function MarketsMap(props: Props) {
                                 maxZoom={25}
                                 maxNativeZoom={19}
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            />
+                                />
+                                {/* @ts-ignore */}
+                                {polygonCluster.features.map((it, index) => (
+                                    <Polygon
+                                        key={index}
+                                        pathOptions={{ color: it.properties.fill }}
+                                        positions={it.geometry.coordinates}
+                                    />
+                                ))}
                             {streetLights.data.map(it =>
                             (
                                 <Marker
@@ -258,7 +266,8 @@ export default function MarketsMap(props: Props) {
                                     </Popup>
                                 </Marker>
                             )
-                            )}
+                                )}
+                                
                         </MapContainer>
                     </div>
                 )}
