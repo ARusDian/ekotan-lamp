@@ -144,38 +144,6 @@ export default function Form(props: Props) {
 					}}
 				/>
 			</div>
-			<div className="form-control w-full mt-4 z-40">
-				<Controller
-					control={form.control}
-					name="status"
-					render={({ field }) => {
-						return (
-							<>
-								<InputLabel htmlFor="roles">Status Lampu Jalan</InputLabel>
-								<ToggleButtonGroup
-									value={field.value}
-									color="primary"
-									exclusive
-									onChange={(e, value) => {
-										field.onChange(value);
-									}}
-									aria-label="text alignment"
-								>
-									<ToggleButton value="BRIGHT" aria-label="left aligned">
-										Terang
-									</ToggleButton>
-									<ToggleButton value="DIM" aria-label="centered">
-										Redup
-									</ToggleButton>
-									<ToggleButton value="OFF" aria-label="right aligned">
-										Mati
-									</ToggleButton>
-								</ToggleButtonGroup>
-							</>
-						);
-					}}
-				/>
-			</div>
 			<div className="form-control w-full mt-4 z-0">
 				<MapContainer
 					center={currentLocation}

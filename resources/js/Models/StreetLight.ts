@@ -7,7 +7,6 @@ export interface StreetLightModel {
   radius: number;
   latitude: number;
   longitude: number;
-  status: "BRIGHT" | "DIM" | "OFF";
   desa_kelurahan_id: number;
   desa_kelurahan: DesaKelurahanModel;
   created_at: string;

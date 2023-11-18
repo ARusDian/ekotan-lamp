@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->double("latitude");
             $table->double("longitude");
             $table->string("radius");
-            $table->enum("status", ["BRIGHT", "DIM", "OFF"]);
             $table->foreignId('desa_kelurahan_id')
                 ->constrained('desa_kelurahan')
                 ->restrictOnDelete()
