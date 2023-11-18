@@ -22,6 +22,15 @@ class StreetLightController extends Controller
         ]);
     }
 
+    public function map(Request $request)
+    {
+        $kecamatan = Kecamatan::with('desaKelurahan')->get();
+        return inertia('Admin/StreetLight/Map', [
+            'kecamatan' => $kecamatan
+            ]);
+    }
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -36,7 +45,15 @@ class StreetLightController extends Controller
 
     public function getStreetLightsApi(Request $request)
     {
-        if ($request->has('kecamatan_id'))
+        if ($request->has("desa_kelurahan_id"))
+        {
+            $streetLights = StreetLight::where("desa_kelurahan_id", $request->get("desa_kelurahan_id"))->get();
+            return response()->json([
+                "status" => "success",
+                "data" => $streetLights
+                ]);
+        }
+        else if ($request->has('kecamatan_id'))
         {
             $kecamatan = Kecamatan::with('streetLights')->findOrFail($request->get('kecamatan_id'));
             return response()->json([
@@ -44,9 +61,9 @@ class StreetLightController extends Controller
                 "data" => $kecamatan->streetLights,
             ]);
         }
-        else if ($request->has("desa_kelurahan_id"))
+        else if ($request->has("address"))
         {
-            $streetLights = StreetLight::where("desa_kelurahan_id", $request->get("desa_kelurahan_id"))->get();
+            $streetLights = StreetLight::where("address", 'LIKE', "%{$request->get("address")}%")->get();
             return response()->json([
                 "status" => "success",
                 "data" => $streetLights
@@ -77,7 +94,7 @@ class StreetLightController extends Controller
             'desa_kelurahan' => ['required'],
             'desa_kelurahan.id' => ['required', 'exists:desa_kelurahan,id'],
         ]);
-        
+
         $streetLight = StreetLight::create([
             'address' => $request->address,
             'description' => $request->description,

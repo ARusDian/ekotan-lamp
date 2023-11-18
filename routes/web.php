@@ -21,7 +21,8 @@ use Inertia\Inertia;
 |
 */
 
-Route::get("/", function () {
+Route::get("/", function ()
+{
     return redirect(route("login"));
 });
 
@@ -30,14 +31,18 @@ Route::middleware([
     "auth:sanctum",
     config("jetstream.auth_session"),
     "verified",
-])->group(function () {
+])->group(function ()
+{
     Route::get("/user/profile", [UserProfileController::class, "show"])->name("profile.show");
 
-    Route::middleware(["role:super-admin|admin"])->group(function () {
+    Route::middleware(["role:super-admin|admin"])->group(function ()
+    {
         Route::get("/dashboard", [DashboardController::class, "index"])->name("dashboard");
-        Route::prefix("admin")->group(function () {
+        Route::prefix("admin")->group(function ()
+        {
             Route::get("/guide-book", [DashboardController::class, "guide"])->name("guide");
-            Route::middleware(["role:super-admin"])->group(function () {
+            Route::middleware(["role:super-admin"])->group(function ()
+            {
                 Route::resource("/user", UserController::class);
                 Route::post('/user/{user}/restore', [UserController::class, "restore"])->name('user.restore');
                 Route::delete('/user/{user}/force-delete', [UserController::class, "forceDelete"])->name('user.force-delete');
@@ -47,7 +52,8 @@ Route::middleware([
                 Route::get('/user-template', [UserController::class, "Template"])->name('user.import-template');
                 Route::get('/user-activity', [UserActivityController::class, "Index"])->name('user-activity');
 
-                Route::prefix('dev')->name('dev.')->group(function () {
+                Route::prefix('dev')->name('dev.')->group(function ()
+                {
                     Route::get('/dump-db', [DevController::class, 'dumpDB'])->name('dump-db');
                     Route::get('/dump-redis', [DevController::class, 'dumpRedis'])->name('dump-redis');
                     Route::get('/dump-storage-logs', [DevController::class, 'dumpStorageLogs'])->name('dump-storage-logs');
@@ -56,6 +62,7 @@ Route::middleware([
             });
 
             Route::resource('street-light', StreetLightController::class);
+            Route::get('street-light-map/', [StreetLightController::class, 'map'])->name('street-light.map');
 
             Route::resource("document-file", DocumentFileController::class);
 
