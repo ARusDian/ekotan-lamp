@@ -18,7 +18,7 @@ export default function Show(props: Props) {
     return (
         <AdminShowLayout
             title={`Lampu Jalan ${streetLight.address}`}
-            headerTitle={'Data User'}
+            headerTitle={'Lampu Jalan'}
             backRoute={route('street-light.index')}
             backRouteTitle="Kembali"
             editRoute={route('street-light.edit', [streetLight.id])}
