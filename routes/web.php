@@ -62,7 +62,7 @@ Route::middleware([
             });
 
             Route::resource('street-light', StreetLightController::class);
-            Route::get('street-light-map/', [StreetLightController::class, 'map'])->name('street-light.map');
+            Route::get('street-light-map', [StreetLightController::class, 'map'])->name('street-light.map');
 
             Route::resource("document-file", DocumentFileController::class);
 
