@@ -12,8 +12,8 @@ import { OpenStreetMapProvider } from "leaflet-geosearch";
 import useTypedPage from "@/Hooks/useTypedPage";
 import LeafletSearchControl from "./LeafletSearchControl";
 import { useQuery } from "@tanstack/react-query";
-import { Button, InputLabel, TextField } from "@mui/material";
-import { StreetLightModel } from "@/Models/StreetLight";
+import { Button, Checkbox, InputLabel, TextField } from "@mui/material";
+import { StreetLightModel, SubmissionStatusColor } from "@/Models/StreetLight";
 import { Link } from "@inertiajs/react";
 
 interface Props {
@@ -33,7 +33,7 @@ export default function MarketsMap(props: Props) {
         error?: any
     }>({
         data: [],
-        isLoading: true,
+        isLoading: false,
     });
 
 
@@ -51,6 +51,7 @@ export default function MarketsMap(props: Props) {
     // });
 
     const [selectedKecamatan, setSelectedKecamatan] = useState<KecamatanModel | null>(null);
+
 
 
     const [streetLightFilterState, setStreetLightFilterState] = useState<{
@@ -87,7 +88,7 @@ export default function MarketsMap(props: Props) {
 
             Object.keys(streetLightFilterState).forEach((element) => {
                 // @ts-ignore
-                if (streetLightFilterState[element] != null && streetLightFilterState != '') {
+                if (streetLightFilterState[element] != null && streetLightFilterState[element] != '') {
                     // @ts-ignore
                     url.searchParams.set(element, streetLightFilterState[element])
                 }
@@ -97,7 +98,8 @@ export default function MarketsMap(props: Props) {
                 isLoading: true,
             });
 
-            await fetch(url.toString()).then(res => res.json()).then(res => {
+            await fetch(url.toString(), {
+            }).then(res => res.json()).then(res => {
                 setStreetLights({
                     data: res.data,
                     isLoading: false,
@@ -107,7 +109,7 @@ export default function MarketsMap(props: Props) {
 
         fetchFilter();
 
-    }, [streetLightFilterState, selectedKecamatan]);
+    }, [JSON.stringify(streetLightFilterState), JSON.stringify(selectedKecamatan)]);
 
 
     return (
@@ -227,7 +229,7 @@ export default function MarketsMap(props: Props) {
                                             html: L.Util.template(
                                                 '<svg version="1" xmlns="http://www.w3.org/2000/svg" width="100" height="50" viewBox="0 0 450 350"><path fill="{mapIconColor}" stroke="#FFF" stroke-width="6" stroke-miterlimit="10" d="M126 23l-6-6A69 69 0 0 0 74 1a69 69 0 0 0-51 22A70 70 0 0 0 1 74c0 21 7 38 22 52l43 47c6 6 11 6 16 0l48-51c12-13 18-29 18-48 0-20-8-37-22-51z"/><circle id="circle-bg" fill="#FFF" cx="74" cy="75" r="{pinInnerCircleRadius}"/></svg>',
                                                 {
-                                                    mapIconColor: "#79d1ff",
+                                                    mapIconColor:  SubmissionStatusColor(it.status) ,
                                                     pinInnerCircleRadius: 35
                                                 }
                                             ),
@@ -240,8 +242,8 @@ export default function MarketsMap(props: Props) {
                                     <Tooltip>{`${it.address} - ${it.id}`}</Tooltip>
                                     <Circle
                                         center={[it.latitude, it.longitude]}
-                                        fillColor="#79d1ff"
-                                        color="#79d1ff"
+                                        fillColor={SubmissionStatusColor(it.status)}
+                                        color={SubmissionStatusColor(it.status)}
                                         radius={it.radius} />
                                     <Popup>
                                         <Link
