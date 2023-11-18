@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StreetLightController;
+use App\Models\DesaKelurahan;
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,11 +31,19 @@ Route::get('kecamatan', function (Request $request)
         'data' => Kecamatan::all()
         ]);
 });
+Route::get('kecamatan/{kecamatan}/desa-kelurahan', function (Request $request)
+{
+    return response()->json([
+        'status' => 'success',
+        'data' => DesaKelurahan::where('kecamatan_id', $request->kecamatan)->get()
+        ]);
+});
 
 Route::post('login', [AuthController::class, 'getToken'])->name('api.login');
 
+Route::get('street-light', [StreetLightController::class, 'getStreetLightsApi'])->name('api.street-light');
 Route::middleware('auth:sanctum')->group(function ()
 {
-    Route::get('street-light', [StreetLightController::class, 'getStreetLightsApi'])->name('api.street-light');
-
+    Route::post('report', [ReportController::class, 'store'])->name('api.report.store');
+    Route::get('report/user', [ReportController::class, 'getUserReportsApi'])->name('api.report.user');
 });

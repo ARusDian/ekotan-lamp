@@ -29,6 +29,7 @@ import { asset } from '@/Models/Helper';
 import { User } from '@/types';
 import { VersionContext } from '@/Context/VersionContext';
 import WbIncandescentIcon from '@mui/icons-material/WbIncandescent';
+import ReportIcon from '@mui/icons-material/Report';
 
 interface Props {
   title: string;
@@ -183,6 +184,17 @@ export default function DashboardAdminLayout({
               <WbIncandescentIcon fontSize="large" />
             </span>
             Lampu Jalan
+          </ResponsiveNavLink>
+        </li>
+        <li>
+          <ResponsiveNavLink
+            href={route('report.index')}
+            active={route().current('report.index')}
+          >
+            <span className={'mr-4'}>
+              <ReportIcon fontSize="large" />
+            </span>
+            Laporan Masyarakat
           </ResponsiveNavLink>
         </li>
         {user.roles.some(role => role.name === 'super-admin') && (

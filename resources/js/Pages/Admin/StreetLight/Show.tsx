@@ -2,11 +2,9 @@ import React from 'react';
 import route from 'ziggy-js';
 import { router } from '@inertiajs/react';
 import AdminShowLayout from '@/Layouts/Admin/AdminShowLayout';
-import { asset } from '@/Models/Helper';
-import { Button } from '@mui/material';
-import { useConfirm } from 'material-ui-confirm';
-import { MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
-import { StreetLightModel } from '@/Models/StreetLight';
+import { Circle, MapContainer, Marker, TileLayer, Tooltip } from 'react-leaflet';
+import { STATUS_COLOR, StreetLightModel, SubmissionStatusColor } from '@/Models/StreetLight';
+import L from 'leaflet';
 
 interface Props {
     streetLight: StreetLightModel;
@@ -14,7 +12,7 @@ interface Props {
 
 export default function Show(props: Props) {
     const streetLight = props.streetLight;
-
+    console.log(`text-[${SubmissionStatusColor(streetLight.status)}]`)
     return (
         <AdminShowLayout
             title={`Lampu Jalan ${streetLight.address}`}
@@ -51,6 +49,12 @@ export default function Show(props: Props) {
                         <tr className="border-b py-3 border-black">
                             <td className="py-3 text-center">Point</td>
                             <td className="py-3 text-center">{streetLight.desa_kelurahan.kecamatan.name}</td>
+                        </tr>
+                        <tr className={`border-b py-3 border-black`} style={{
+                            color: SubmissionStatusColor(streetLight.status)
+                        }}>
+                            <td className="py-3 text-center">Status</td>
+                            <td className="py-3 text-center">{streetLight.status}</td>
                         </tr>
                         <tr className="border-b py-3 border-black">
                             <td className="py-3 text-center">Radius</td>
@@ -97,8 +101,28 @@ export default function Show(props: Props) {
                             />
 
                             <Marker
+                                key={streetLight.id}
                                 position={[streetLight.latitude, streetLight.longitude]}
+                                icon={
+                                    L.divIcon({
+                                        className: "leaflet-data-marker",
+                                        html: L.Util.template(
+                                            '<svg version="1" xmlns="http://www.w3.org/2000/svg" width="100" height="50" viewBox="0 0 450 350"><path fill="{mapIconColor}" stroke="#FFF" stroke-width="6" stroke-miterlimit="10" d="M126 23l-6-6A69 69 0 0 0 74 1a69 69 0 0 0-51 22A70 70 0 0 0 1 74c0 21 7 38 22 52l43 47c6 6 11 6 16 0l48-51c12-13 18-29 18-48 0-20-8-37-22-51z"/><circle id="circle-bg" fill="#FFF" cx="74" cy="75" r="{pinInnerCircleRadius}"/></svg>',
+                                            {
+                                                mapIconColor: SubmissionStatusColor(streetLight.status),
+                                                pinInnerCircleRadius: 35
+                                            }
+                                        ),
+                                        iconAnchor: [30, 20],
+                                        iconSize: [25, 30],
+                                        popupAnchor: [1, -34],
+                                    })
+                                }                                
                             >
+                                <Circle
+                                    center={[streetLight.latitude, streetLight.longitude]}
+                                    fillColor={SubmissionStatusColor(streetLight.status)}
+                                    radius={streetLight.radius} />
                                 <Tooltip>{streetLight.address}-{streetLight.id}</Tooltip>
                             </Marker>
                         </MapContainer>

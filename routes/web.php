@@ -4,6 +4,7 @@ use App\Actions\Fortify\UserProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DevController;
 use App\Http\Controllers\DocumentFileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StreetLightController;
 use App\Http\Controllers\UserActivityController;
 use App\Http\Controllers\UserController;
@@ -63,6 +64,7 @@ Route::middleware([
 
             Route::resource('street-light', StreetLightController::class);
             Route::get('street-light-map', [StreetLightController::class, 'map'])->name('street-light.map');
+            Route::resource('report', ReportController::class);
 
             Route::resource("document-file", DocumentFileController::class);
 
