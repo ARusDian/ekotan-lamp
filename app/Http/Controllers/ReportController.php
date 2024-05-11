@@ -40,7 +40,7 @@ class ReportController extends Controller
     public function getUserReportsApi(Request $request)
     {
         $reports = Report::with(["streetLight.desaKelurahan.kecamatan", "user"])
-            ->where("user_id", Auth::user()->id)
+            ->where("user_id", $request->get("user_id"))
             ->latest('id')
             ->paginate($request->get('perPage') ?? 15);
         return response()->json([

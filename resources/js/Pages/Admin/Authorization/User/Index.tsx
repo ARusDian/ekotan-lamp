@@ -260,7 +260,7 @@ export default function Index(props: Props) {
             color="primary"
             isNextPage
           >
-            Export Student
+            Export User
           </MuiInertiaLinkButton>
         </div>
         <MaterialReactTable table={table} />

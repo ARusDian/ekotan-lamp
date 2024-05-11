@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request)
     return $request->user();
 });
 
+Route::get('report/user', [ReportController::class, 'getUserReportsApi'])->name('api.report.user');
 Route::get('kecamatan', function (Request $request)
 {
     return response()->json([
@@ -43,9 +44,9 @@ Route::post('login', [AuthController::class, 'getToken'])->name('api.login');
 
 Route::get('street-light', [StreetLightController::class, 'getStreetLightsApi'])->name('api.street-light');
 
+
 Route::get('report', [ReportController::class, 'reportIndex'])->name('api.report.index');
 Route::middleware('auth:sanctum')->group(function ()
 {
     Route::post('report', [ReportController::class, 'store'])->name('api.report.store');
-    Route::get('report/user', [ReportController::class, 'getUserReportsApi'])->name('api.report.user');
 });

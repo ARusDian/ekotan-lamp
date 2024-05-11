@@ -36,6 +36,8 @@ export default function MarketsMap(props: Props) {
         isLoading: false,
     });
 
+    const [hideStreetLamp, setHideStreetLamp] = useState<boolean>(false);
+
 
     // let loc_max = page.props.location.max;
     // let loc_min = page.props.location.min;
@@ -83,6 +85,13 @@ export default function MarketsMap(props: Props) {
     }, [selectedKecamatan])
 
     useEffect(() => {
+        if (hideStreetLamp) {
+            setStreetLights({
+                ...streetLights,
+                data: []
+            })
+            return
+        }
         const fetchFilter = async () => {
             const url = new URL(route('api.street-light'));
 
@@ -109,18 +118,19 @@ export default function MarketsMap(props: Props) {
 
         fetchFilter();
 
-    }, [JSON.stringify(streetLightFilterState), JSON.stringify(selectedKecamatan)]);
+    }, [JSON.stringify(streetLightFilterState), JSON.stringify(selectedKecamatan), hideStreetLamp]);
+
 
 
     return (
         <div className="flex flex-col gap-4 p-5 m-3 md:m-10">
             <div className="text-md lg:text-3xl font-bold">
-                Peta Persebaran Sarana Perdagangan
+                Peta Sebaran Lampu Jalan
             </div>
             <div className="flex flex-col gap-2">
                 <div className="">
                     <InputLabel>
-                        Alamat Usaha Perdagangan
+                        Alamat Lampu Jalan
                     </InputLabel>
                     <TextField
                         className="w-full"
@@ -189,6 +199,20 @@ export default function MarketsMap(props: Props) {
                     />
                 </div>
 
+                <div className="flex flex-row gap-2 justify-end">
+                    <div className="flex">
+                        <Checkbox
+                            checked={hideStreetLamp}
+                            onChange={e => {
+                                setHideStreetLamp(e.target.checked)
+                            }}
+                        />
+                        <p className="my-auto">
+                            Sembunyikan Lampu Jalan
+                        </p>
+                    </div>
+                </div>
+
                 {streetLights.isLoading ? (
                     <div className="flex justify-center items-center">
                         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
@@ -217,15 +241,15 @@ export default function MarketsMap(props: Props) {
                                 maxZoom={25}
                                 maxNativeZoom={19}
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            {/* @ts-ignore */}
+                            {polygonCluster.features.map((it, index) => (
+                                <Polygon
+                                    key={index}
+                                    pathOptions={{ color: it.properties.fill }}
+                                    positions={it.geometry.coordinates}
                                 />
-                                {/* @ts-ignore */}
-                                {polygonCluster.features.map((it, index) => (
-                                    <Polygon
-                                        key={index}
-                                        pathOptions={{ color: it.properties.fill }}
-                                        positions={it.geometry.coordinates}
-                                    />
-                                ))}
+                            ))}
                             {streetLights.data.map(it =>
                             (
                                 <Marker
@@ -237,7 +261,7 @@ export default function MarketsMap(props: Props) {
                                             html: L.Util.template(
                                                 '<svg version="1" xmlns="http://www.w3.org/2000/svg" width="100" height="50" viewBox="0 0 450 350"><path fill="{mapIconColor}" stroke="#FFF" stroke-width="6" stroke-miterlimit="10" d="M126 23l-6-6A69 69 0 0 0 74 1a69 69 0 0 0-51 22A70 70 0 0 0 1 74c0 21 7 38 22 52l43 47c6 6 11 6 16 0l48-51c12-13 18-29 18-48 0-20-8-37-22-51z"/><circle id="circle-bg" fill="#FFF" cx="74" cy="75" r="{pinInnerCircleRadius}"/></svg>',
                                                 {
-                                                    mapIconColor:  SubmissionStatusColor(it.status) ,
+                                                    mapIconColor: SubmissionStatusColor(it.status),
                                                     pinInnerCircleRadius: 35
                                                 }
                                             ),
@@ -266,8 +290,8 @@ export default function MarketsMap(props: Props) {
                                     </Popup>
                                 </Marker>
                             )
-                                )}
-                                
+                            )}
+
                         </MapContainer>
                     </div>
                 )}

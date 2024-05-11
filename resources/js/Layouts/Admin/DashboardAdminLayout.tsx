@@ -197,7 +197,7 @@ export default function DashboardAdminLayout({
             Laporan Masyarakat
           </ResponsiveNavLink>
         </li>
-        {user.roles.some(role => role.name === 'super-admin') && (
+        {/* {user.roles.some(role => role.name === 'super-admin') && (
           <>
             <li>
               <ResponsiveNavLink
@@ -209,8 +209,8 @@ export default function DashboardAdminLayout({
                 </span>
                 Pengguna
               </ResponsiveNavLink>
-            </li>
-            <li>
+            </li> */}
+            {/* <li>
               <ResponsiveNavLink
                 href={route('user-activity')}
                 active={route().current('user-activity')}
@@ -220,8 +220,8 @@ export default function DashboardAdminLayout({
                 </span>
                 Log Aktivitas
               </ResponsiveNavLink>
-            </li>
-            <Divider >
+            </li> */}
+            {/* <Divider >
               DEV
             </Divider>
             <li>
@@ -257,9 +257,9 @@ export default function DashboardAdminLayout({
                 </span>
                 dumpStorageLogs
               </a>
-            </li>
-          </>
-        )}
+            </li> */}
+          {/* </>
+        )} */}
 
       </ul>
     </Box>

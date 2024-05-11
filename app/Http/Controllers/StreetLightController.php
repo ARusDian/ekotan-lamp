@@ -208,7 +208,7 @@ class StreetLightController extends Controller
             }
             $streetLightCluster[] = $clusterData;
         }
-        
+
 
         $alphaValue = 0.1;
 
@@ -216,8 +216,8 @@ class StreetLightController extends Controller
 
         foreach ($streetLightCluster as $cluster)
         {
-            $generator = new PolygonGenerator($cluster);
-            $concaveHullArray[] = $generator->generatePolygon(40, deg2rad(45));
+            $generator = new PolygonGenerator($cluster, 40);
+            $concaveHullArray[] = $generator->generatePolygon();
         }
 
         $concaveHullArrayFloat = [];
@@ -244,10 +244,10 @@ class StreetLightController extends Controller
             $geoJson['features'][] = [
                 'type' => 'Feature',
                 'properties' => [
-                    'stroke' => '#555555',
+                    'stroke' => '#75ffef',
                     'stroke-width' => 2,
                     'stroke-opacity' => 1,
-                    'fill' => '#555555',
+                    'fill' => '#75ffef',
                     'fill-opacity' => 0.5,
                 ],
                 'geometry' => [
@@ -258,7 +258,7 @@ class StreetLightController extends Controller
                 ],
             ];
         }
-        
+
         return response()->json($geoJson);
 
     }
